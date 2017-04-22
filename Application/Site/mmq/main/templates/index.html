@@ -1,0 +1,33 @@
+  {% extends 'layout.html' %}
+	{% block body %}
+	<!-- Keep jumbotron in center of page solution:
+	http://stackoverflow.com/a/27500365/1459035 -->
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="col-md-8 col-md-offset-2 centering" >
+				<!-- ID priority solution for safe css override from:
+				 http://stackoverflow.com/a/27704409/1459035 -->
+        <div class="jumbotron" id="landing">
+          <h1 class="text-center">Monday Morning Quarterback</h1>
+          <p>
+						Have you ever wondered why in the world your
+						favorite NFL quarterback threw a hail marry when they should have
+						passed? Or why they ran the ball instead of going for that field
+						goal to win the game?
+					</p>
+					<p>
+						There are many different scenarios that NFL
+						quarterbacks face. Here you can see how your
+						instincts match up with NFL Quarterbacks and other users.
+					</p>
+					<p>
+						<i>More info about data, quetions, and sources</i>
+					</p>
+          <p class="text-center">
+						<a href="getstarted" class="btn btn-primary btn-lg">Get Started</a>
+					</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
