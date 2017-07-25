@@ -4,15 +4,6 @@ import re
 import pymongo
 from pprint import pprint
 
-mongo = pymongo.MongoClient()
-print(mongo.database_names())
-
-cf_data = pd.read_csv('Data/Football-Scenarios-DFE-832307.csv')
-cf_data = cf_data[cf_data['_golden'] == False]
-
-split_scenarios = cf_data.orig_antecedent.str.split('.').tolist()
-split_scenarios = [scenario[0:-1] for scenario in split_scenarios]
-
 
 def convert_ordinal(value):
     if value == 'first':
@@ -80,15 +71,6 @@ def extract(line):
     return extraction
 
 
-data = [
-    extract(scenario)
-    for scenario in cf_data.orig_antecedent
-]
-
-data_df = pd.DataFrame.from_records(data, columns=['scenario', 'down', 'yards', 'field',
-                                                   'quarter', 'clock', 'score'])
-
-
 def parse_antecedent(antecedent):
     if antecedent in ['pass', 'run', 'punt']:
         return antecedent
@@ -100,19 +82,51 @@ def parse_antecedent(antecedent):
         return 'idk'
 
 
-guesses = [parse_antecedent(antecedent) for antecedent in cf_data.loc[:, 'antecedent']]
+def run_conversion(insert=False):
+    mongo = pymongo.MongoClient()
+    print(mongo.database_names())
+
+    cf_data = pd.read_csv('Data/Football-Scenarios-DFE-832307.csv')
+    cf_data = cf_data[cf_data['_golden'] == False]
+
+    split_scenarios = cf_data.orig_antecedent.str.split('.').tolist()
+    split_scenarios = [scenario[0:-1] for scenario in split_scenarios]
+
+    # Testing
+    print(split_scenarios)
+    # End Testing
+
+    data = [
+        extract(scenario)
+        for scenario in cf_data.orig_antecedent
+    ]
+
+    data_df = pd.DataFrame.from_records(data,
+        columns=[
+            'scenario',
+            'down',
+            'yards',
+            'field',
+            'quarter',
+            'clock',
+            'score'
+        ]
+    )
+
+    guesses = [parse_antecedent(antecedent) for antecedent in cf_data.loc[:, 'antecedent']]
 
 
-data_df.loc[:, 'guess'] = guesses
+    data_df.loc[:, 'guess'] = guesses
 
-#help found here http://stackoverflow.com/questions/33979983/insert-rows-from-pandas-dataframe-into-mongodb-collection-as-individual-document
+    #help found here http://stackoverflow.com/questions/33979983/insert-rows-from-pandas-dataframe-into-mongodb-collection-as-individual-document
 
-cleaned_cf_data = data_df.copy()
-cleaned_cf_data_records = cleaned_cf_data.to_dict('records')
+    cleaned_cf_data = data_df.copy()
+    cleaned_cf_data_records = cleaned_cf_data.to_dict('records')
 
-db = mongo.get_database('mmq')
-db.collection_names()
-scenarios = db.scenarios
-# Uncomment next line to actually run the insert command
-#scenarios.insert_many(cleaned_cf_data_records)
-pprint([s for s in scenarios.find()])
+    db = mongo.get_database('mmq')
+    db.collection_names()
+    scenarios = db.scenarios
+    # if insert is TRUE then run the insert command
+    if insert == True:
+        scenarios.insert_many(cleaned_cf_data_records)
+    pprint([s for s in scenarios.find()])
