@@ -89,11 +89,10 @@ def run_conversion(insert=False):
     cf_data = pd.read_csv('Data/Football-Scenarios-DFE-832307.csv')
     cf_data = cf_data[cf_data['_golden'] == False]
 
-    split_scenarios = cf_data.orig_antecedent.str.split('.').tolist()
-    split_scenarios = [scenario[0:-1] for scenario in split_scenarios]
-
     # Testing
-    print(split_scenarios)
+    #split_scenarios = cf_data.orig_antecedent.str.split('.').tolist()
+    #split_scenarios = [scenario[0:-1] for scenario in split_scenarios]
+    # print(split_scenarios)
     # End Testing
 
     data = [
