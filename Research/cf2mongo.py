@@ -30,9 +30,9 @@ def convert_clock(value):
 
 
 def convert_scoredelta(value):
-        down_by = re.search('down by (.+?)', value)
-        up_by = re.search('up by (.+?)', value)
-
+        down_by = re.search('down by (.+?) points', value)
+        up_by = re.search('up by (.+?) points', value)
+        
         if down_by:
             return int(down_by.group(1)) * -1
         elif up_by:
@@ -53,11 +53,11 @@ def convert_fieldpos(value):
 
 def extract(line):
     down = re.search('It is (.+?) down', line)
-    ytg = re.search('down and (.+?). ', line)
+    ytg = re.search('down and (.+?)\.', line)
     fieldpos = re.search("your (.+?) yardline", line)
     quarter = re.search('the (.+?) quarter', line)
     clock = re.search('There is (.+?) left', line)
-    scoredelta = re.search('You are (.+?) points', line)
+    scoredelta = re.search('You are (.+?)\.', line)
 
     extraction = (
         line,
@@ -82,22 +82,13 @@ def parse_antecedent(antecedent):
         return 'idk'
 
 
-def run_conversion(insert=False):
-    mongo = pymongo.MongoClient()
-    print(mongo.database_names())
-
-    cf_data = pd.read_csv('Data/Football-Scenarios-DFE-832307.csv')
-    cf_data = cf_data[cf_data['_golden'] == False]
-
-    # Testing
-    #split_scenarios = cf_data.orig_antecedent.str.split('.').tolist()
-    #split_scenarios = [scenario[0:-1] for scenario in split_scenarios]
-    # print(split_scenarios)
-    # End Testing
+def run_conversion(path='Data/Football-Scenarios-DFE-832307.csv'):
+    crowd_flower_data = pd.read_csv(path)
+    crowd_flower_data = crowd_flower_data[crowd_flower_data['_golden'] == False]
 
     data = [
         extract(scenario)
-        for scenario in cf_data.orig_antecedent
+        for scenario in crowd_flower_data.orig_antecedent
     ]
 
     data_df = pd.DataFrame.from_records(data,
@@ -111,21 +102,19 @@ def run_conversion(insert=False):
             'score'
         ]
     )
-
-    guesses = [parse_antecedent(antecedent) for antecedent in cf_data.loc[:, 'antecedent']]
-
-
+    guesses = [parse_antecedent(antecedent) for antecedent in crowd_flower_data.loc[:, 'antecedent']]
     data_df.loc[:, 'guess'] = guesses
 
-    #help found here http://stackoverflow.com/questions/33979983/insert-rows-from-pandas-dataframe-into-mongodb-collection-as-individual-document
+    return data_df
 
-    cleaned_cf_data = data_df.copy()
-    cleaned_cf_data_records = cleaned_cf_data.to_dict('records')
-
+def convert_and_insert(path='Data/Football-Scenarios-DFE-832307.csv'):
+    mongo = pymongo.MongoClient()
+    print(mongo.database_names())
     db = mongo.get_database('mmq')
     db.collection_names()
     scenarios = db.scenarios
-    # if insert is TRUE then run the insert command
-    if insert == True:
-        scenarios.insert_many(cleaned_cf_data_records)
-    pprint([s for s in scenarios.find()])
+    cleaned_crowd_flower_data = run_conversion(path)
+    # help found here:
+    # http://stackoverflow.com/questions/33979983/insert-rows-from-pandas-dataframe-into-mongodb-collection-as-individual-document
+    cleaned_crowd_flower_data_records = cleaned_crowd_flower_data.to_dict('records')
+    scenarios.insert_many(cleaned_crowd_flower_data_records)
