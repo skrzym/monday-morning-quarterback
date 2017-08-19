@@ -78,7 +78,7 @@
       <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
         <div class="panel" id="panel-top">
           <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Your guess for this situation!</p>
+            <p class="lead" id='selection'>Your guess</p>
           </div>
           <div class="panel-body">
             <p class="lead text-center">{{ guess }}</p>
@@ -88,14 +88,30 @@
       <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
         <div class="panel" id="panel-top">
           <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Other guesses for this situation</p>
+            <p class="lead" id='selection'>Other guesses</p>
           </div>
           <div class="panel-body">
-            <ul>
+            <!-- <ul>
               {% for s in scenarios %}
               <li>{{ s }}</li>
               {% endfor %}
-            </ul>
+            </ul>-->
+            {{ scenarios|safe }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>NFL Stats</p>
+          </div>
+          <div class="panel-body">
+            <!-- <ul>
+              {% for s in scenarios %}
+              <li>{{ s }}</li>
+              {% endfor %}
+            </ul>-->
+            {{ nflstats|safe }}
           </div>
         </div>
       </div>
