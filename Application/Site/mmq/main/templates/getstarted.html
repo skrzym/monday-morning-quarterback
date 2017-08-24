@@ -19,10 +19,10 @@
       <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5" >
         <div class="panel" id="panel-top">
           <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Down</p>
+            <p class="lead" id='selection-title'>Down</p>
           </div>
-          <div class="panel-body">
-            <select class="form-control text-center" id="select" name="down">
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-down" name="down" multiple size="4">
               {% for d in down_list %}
               <option value="{{ d }}" >{{ d }}</option>
               {% endfor %}
@@ -33,10 +33,10 @@
       <div class="col-md-2 col-xs-5" >
         <div class="panel" id="panel-top">
           <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Quarter</p>
+            <p class="lead" id='selection-title'>Quarter</p>
           </div>
-          <div class="panel-body">
-            <select class="form-control text-center" id="select" name="quarter">
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-quarter" name="quarter" multiple size="4">
               {% for q in quarter_list %}
               <option value="{{ q }}" >{{ q }}</option>
               {% endfor %}
@@ -47,10 +47,10 @@
       <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5" >
         <div class="panel" id="panel-top">
           <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Time Left</p>
+            <p class="lead" id='selection-title'>Time Left</p>
           </div>
-          <div class="panel-body">
-            <select class="form-control text-center" id="select" name="clock">
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-clock" name="clock" multiple size="4">
               {% for c in clock_list %}
               <option value="{{ c }}" >{{ c }}</option>
               {% endfor %}
@@ -61,10 +61,10 @@
       <div class="col-md-2 col-xs-5" >
         <div class="panel" id="panel-top">
           <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Yards to Go</p>
+            <p class="lead" id='selection-title'>Yards to Go</p>
           </div>
-          <div class="panel-body">
-            <select class="form-control text-center" id="select" name="yards">
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-yards" name="yards" multiple size="4">
               {% for y in yards_list %}
               <option value="{{ y }}" >{{ y }}</option>
               {% endfor %}
@@ -75,10 +75,10 @@
       <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5">
         <div class="panel" id="panel-top">
           <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Field Position</p>
+            <p class="lead" id='selection-title'>Yard Line</p>
           </div>
-          <div class="panel-body">
-            <select class="form-control text-center" id="select" name="field">
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-field" name="field" multiple size="4">
               {% for f in field_list %}
               <option value="{{ f }}" >{{ f }}</option>
               {% endfor %}
@@ -89,10 +89,14 @@
       <div class="col-md-2 col-xs-5">
         <div class="panel" id="panel-top">
           <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Score Delta</p>
+            <p class="lead" id='selection-title'>Score Delta</p>
           </div>
-          <div class="panel-body">
-            <select class="form-control text-center" id="select" name="score">
+          <div class="panel-body" id="selection-options">
+            <div style="text-align:center; margin-bottom:1px;">
+              <input type="radio" name="sign" value="1" checked> <b>Up</b>
+              <input type="radio" name="sign" value="-1" style="padding-left:5px;"><b>Dn</b>
+            </div>
+            <select class="form-control text-center" id="select-score" name="score" multiple size="3">
               {% for s in score_list %}
               <option value="{{ s }}" >{{ s }}</option>
               {% endfor %}
@@ -128,29 +132,31 @@
           <input type="checkbox" id="kneel-item" class="hidden" name="guess" value="kneel">
         </div>
       </div>
-      <div class="col-md-offset-0 col-md-2 col-xs-offset-3 col-xs-6">
+      <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5">
         <div class="well text-center" id="well">
           <img src="../static/img/fg.png" class="img-responsive img-radio">
           <button type="button" class="btn btn-primary btn-radio">Field Goal</button>
           <input type="checkbox" id="fg-item" class="hidden" name="guess" value="fg">
         </div>
       </div>
-      <div class="col-md-offset-0 col-md-2 col-xs-offset-3 col-xs-6">
+      <div class="col-md-offset-0 col-md-2 col-xs-offset-0 col-xs-5">
         <div class="well text-center" id="well">
           <img src="../static/img/question-mark.png" class="img-responsive img-radio">
-          <button type="button" class="btn btn-primary btn-radio">I Don't Know</button>
-          <input type="checkbox" id="fg-item" class="hidden" name="guess" value="idk">
+          <button type="button" class="btn btn-primary btn-radio">Don't Know</button>
+          <input type="checkbox" id="idk-item" class="hidden" name="guess" value="idk">
         </div>
       </div>
-      <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
+      <div class="col-md-offset-4 col-md-4 col-xs-offset-3 col-xs-6" id='submitRow'>
         <div class="panel" id="panel-top">
           <div class="panel-body text-center">
-            <input type="submit" class="btn btn-primary" value="Submit">
+            <input type="submit" id='submit-button' class="btn btn-primary" value="Submit">
           </div>
         </div>
       </div>
       </form>
       </div>
     </div>
-  </div>
+
+    <!-- Validation JS -->
+    <script src="../static/js/validation.js"></script>
 {% endblock %}

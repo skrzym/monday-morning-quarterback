@@ -1,121 +1,223 @@
   {% extends 'layout.html' %}
 	{% block body %}
+
+  <!-- Charts -->
+  <script src="../static/js/graphs.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.3.2/holder.min.js" type="text/javascript"></script>
+  <script>
+    Holder.add_theme("white", { background:"#fff", foreground:"#a7a7a7", size:10 });
+  </script>
+
+
+  <!-- URL Filters -->
+  <script>
+  down = "{{ down }}"
+  quarter = "{{ quarter }}"
+  clock = "{{ clock }}"
+  yards = "{{ yards }}"
+  field = "{{ field }}"
+  score = "{{ score }}"
+  PlayType = "{{ guess }}"
+
+  console.log(down + ', ' + quarter + ', '+ clock + ', '+ yards + ', '+ field + ', '+ score + ', ' + PlayType)
+
+  var guessesURL = '/data/guesses/?down='+down+'&quarter='+quarter+'&clock'+clock+'&yards'+yards+'&field'+field+'&score'+score
+  var nflURL = '/data/nfl/?down='+down+'&quarter='+quarter+'&clock'+clock+'&yards'+yards+'&field'+field+'&score'+score
+  var modelURL = 'api/predict/?qtr='+quarter+'&down='+down+'&clock'+clock+'&yards'+yards+'&field'+field+'&score'+score
+
+  q
+   .defer(d3.json, guessesURL)
+   .defer(d3.json, nflURL)
+   .defer(d3.json, modelURL)
+   .await(makeGraphs)
+
+  </script>
 	<!-- Keep jumbotron in center of page solution:
 	http://stackoverflow.com/a/27500365/1459035 -->
   <!-- ID priority solution for safe css override from:
    http://stackoverflow.com/a/27704409/1459035 -->
-  <div class="container-fluid">
-    <div class="row-fluid centering" style="margin-top:10px;">
-      <!--Scenario Selection -->
-      <div class="col-md-offset-0 col-md-12 col-xs-12" >
-        <div class="jumbotron" id="landing">
-          <h1 class="text-center">Results</h1>
-          <p class='lead text-center'>
-            Here are the results!
-          </p>
-        </div>
-      </div>
-      <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5" >
+
+  <div class="container-fluid" style="margin-top:15px;">
+    <div class="row-fluid centering">
+      <div class="col-sm-3">
         <div class="panel" id="panel-top">
           <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Down</p>
+            Cell Title
+          </div>
+          <div class="chart-stage">
+            <img data-src="holder.js/100%x650/white">
           </div>
           <div class="panel-body">
-            <p class="lead text-center">{{ down }}</p>
+            Ut enim ad minim veniam,
+            quis nostrud exercitation ullamco laboris nisi
+            ut aliquip ex ea commodo consequat. Duis aute irure
+            dolor in reprehenderit in voluptate velit esse cillum
+            dolore eu fugiat nulla pariatur. Excepteur sint
+            occaecat cupidatat non proident, sunt in culpa
+            qui officia deserunt mollit anim id est laborum.
           </div>
         </div>
       </div>
-      <div class="col-md-2 col-xs-5" >
-        <div class="panel" id="panel-top">
-          <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Quarter</p>
-          </div>
-          <div class="panel-body">
-            <p class="lead text-center">{{ quarter }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5" >
-        <div class="panel" id="panel-top">
-          <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Time Left</p>
-          </div>
-          <div class="panel-body">
-            <p class="lead text-center">{{ clock }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 col-xs-5" >
-        <div class="panel" id="panel-top">
-          <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Yards to Go</p>
-          </div>
-          <div class="panel-body">
-            <p class="lead text-center">{{ yards }}</p>
+      <div class="col-sm-9">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="panel" id="panel-top">
+              <div class="panel-heading text-center">
+                Cell Title 1
+              </div>
+              <div class="chart-stage">
+                <!--<img data-src="holder.js/100%x240/white">-->
+                <ul>
+                  {% for s in scenarios %}
+                  <li>{{ s }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <div class="panel-body">
+                Ut enim ad minim veniam,
+                quis nostrud exercitation
+                ullamco laboris nisiut
+                aliquip ex ea commodo
+                consequat.
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5">
-        <div class="panel" id="panel-top">
-          <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Field Position</p>
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="panel" id="panel-top">
+              <div class="panel-heading text-center">
+                Cell Title
+              </div>
+              <div class="chart-stage">
+                <img data-src="holder.js/100%x120/white">
+              </div>
+              <div class="panel-body">
+                Ut enim ad minim veniam,
+                quis nostrud exercitation
+                ullamco laboris nisiut
+                aliquip ex ea commodo
+                consequat.
+              </div>
+            </div>
           </div>
-          <div class="panel-body">
-            <p class="lead text-center">{{ field }}</p>
+          <div class="col-sm-4">
+            <div class="panel" id="panel-top">
+              <div class="panel-heading text-center">
+                Cell Title
+              </div>
+              <div class="chart-stage">
+                <img data-src="holder.js/100%x120/white">
+              </div>
+              <div class="panel-body">
+                Ut enim ad minim veniam,
+                quis nostrud exercitation
+                ullamco laboris nisiut
+                aliquip ex ea commodo
+                consequat.
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="col-md-offset-0 col-md-2 col-xs-offset-0 col-xs-5">
-        <div class="panel" id="panel-top">
-          <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Score Delta</p>
-          </div>
-          <div class="panel-body">
-            <p class="lead text-center">{{ score }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
-        <div class="panel" id="panel-top">
-          <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Your guess</p>
-          </div>
-          <div class="panel-body">
-            <p class="lead text-center">{{ guess }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
-        <div class="panel" id="panel-top">
-          <div class="panel-heading text-center">
-            <p class="lead" id='selection'>Other guesses</p>
-          </div>
-          <div class="panel-body">
-            <!-- <ul>
-              {% for s in scenarios %}
-              <li>{{ s }}</li>
-              {% endfor %}
-            </ul>-->
-            {{ scenarios|safe }}
-          </div>
-        </div>
-      </div>
-      <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
-        <div class="panel" id="panel-top">
-          <div class="panel-heading text-center">
-            <p class="lead" id='selection'>NFL Stats</p>
-          </div>
-          <div class="panel-body">
-            <!-- <ul>
-              {% for s in scenarios %}
-              <li>{{ s }}</li>
-              {% endfor %}
-            </ul>-->
-            {{ nflstats|safe }}
+          <div class="col-sm-4">
+            <div class="panel" id="panel-top">
+              <div class="panel-heading text-center">
+                Cell Title
+              </div>
+              <div class="chart-stage">
+                <img data-src="holder.js/100%x120/white">
+              </div>
+              <div class="panel-body">
+                Ut enim ad minim veniam,
+                quis nostrud exercitation
+                ullamco laboris nisiut
+                aliquip ex ea commodo
+                consequat.
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="panel" id="panel-top">
+              <div class="panel-heading text-center">
+                Cell Title
+              </div>
+              <div class="chart-stage">
+                <img data-src="holder.js/100%x120/white">
+              </div>
+              <div class="panel-body">
+                Ut enim ad minim veniam,
+                quis nostrud exercitation
+                ullamco laboris nisiut
+                aliquip ex ea commodo
+                consequat.
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="panel" id="panel-top">
+              <div class="panel-heading text-center">
+                Cell Title
+              </div>
+              <div class="chart-stage">
+                <img data-src="holder.js/100%x120/white">
+              </div>
+              <div class="panel-body">
+                Ut enim ad minim veniam,
+                quis nostrud exercitation
+                ullamco laboris nisiut
+                aliquip ex ea commodo
+                consequat.
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="panel" id="panel-top">
+              <div class="panel-heading text-center">
+                Cell Title
+              </div>
+              <div class="chart-stage">
+                <img data-src="holder.js/100%x120/white">
+              </div>
+              <div class="panel-body">
+                Ut enim ad minim veniam,
+                quis nostrud exercitation
+                ullamco laboris nisiut
+                aliquip ex ea commodo
+                consequat.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="panel" id="panel-top">
+              <div class="panel-heading text-center">
+                Cell Title 2
+              </div>
+              <div class="chart-stage">
+                <!--<img data-src="holder.js/100%x240/white">-->
+                <ul>
+                  {% for n in nflstats %}
+                  <li>{{ n }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <div class="panel-body">
+                Ut enim ad minim veniam,
+                quis nostrud exercitation
+                ullamco laboris nisiut
+                aliquip ex ea commodo
+                consequat.
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+
+
 {% endblock %}

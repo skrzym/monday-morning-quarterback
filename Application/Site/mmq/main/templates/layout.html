@@ -5,6 +5,17 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Monday Morning Quarterback</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.2/dc.css" />
+	<!--JS Links-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-queue/3.0.7/d3-queue.js"></script>
+	<script>
+		var q = d3.queue();
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.2/dc.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reductio/0.6.3/reductio.js"></script>
+  <script src="https://npmcdn.com/universe@latest/universe.js"></script>
 	<!-- Bootstrap Links -->
 	<!-- jQuery library -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
@@ -19,20 +30,5 @@
 	{% block body %}
 	{% endblock %}
 </body>
-
-<script>
-$(function () {
-    $('.btn-radio').click(function(e) {
-        $('.btn-radio').not(this).removeClass('active')
-    		.siblings('input').prop('checked',false)
-        .siblings('.img-radio').css('opacity','0.75')
-				.parent('#well').css('border','3px solid rgb(245,245,245)');
-    	$(this).addClass('active')
-        .siblings('input').prop('checked',true)
-    		.siblings('.img-radio').css('opacity','1')
-				.parent('#well').css('border','3px solid #0c7cd5');
-    });
-});
-</script>
 
 </html>

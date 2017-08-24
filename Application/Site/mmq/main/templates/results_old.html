@@ -1,0 +1,121 @@
+  {% extends 'layout.html' %}
+	{% block body %}
+	<!-- Keep jumbotron in center of page solution:
+	http://stackoverflow.com/a/27500365/1459035 -->
+  <!-- ID priority solution for safe css override from:
+   http://stackoverflow.com/a/27704409/1459035 -->
+  <div class="container-fluid">
+    <div class="row-fluid centering" style="margin-top:10px;">
+      <!--Scenario Selection -->
+      <div class="col-md-offset-0 col-md-12 col-xs-12" >
+        <div class="jumbotron" id="landing">
+          <h1 class="text-center">Results</h1>
+          <p class='lead text-center'>
+            Here are the results!
+          </p>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5" >
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>Down</p>
+          </div>
+          <div class="panel-body">
+            <p class="lead text-center">{{ down }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-xs-5" >
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>Quarter</p>
+          </div>
+          <div class="panel-body">
+            <p class="lead text-center">{{ quarter }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5" >
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>Time Left</p>
+          </div>
+          <div class="panel-body">
+            <p class="lead text-center">{{ clock }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-xs-5" >
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>Yards to Go</p>
+          </div>
+          <div class="panel-body">
+            <p class="lead text-center">{{ yards }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-xs-offset-1 col-xs-5">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>Field Position</p>
+          </div>
+          <div class="panel-body">
+            <p class="lead text-center">{{ field }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-xs-offset-0 col-xs-5">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>Score Delta</p>
+          </div>
+          <div class="panel-body">
+            <p class="lead text-center">{{ score }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>Your guess</p>
+          </div>
+          <div class="panel-body">
+            <p class="lead text-center">{{ guess }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>Other guesses</p>
+          </div>
+          <div class="panel-body">
+            <!-- <ul>
+              {% for s in scenarios %}
+              <li>{{ s }}</li>
+              {% endfor %}
+            </ul>-->
+            {{ scenarios|safe }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-12 col-xs-offset-1 col-xs-10">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection'>NFL Stats</p>
+          </div>
+          <div class="panel-body">
+            <!-- <ul>
+              {% for s in scenarios %}
+              <li>{{ s }}</li>
+              {% endfor %}
+            </ul>-->
+            {{ nflstats|safe }}
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
