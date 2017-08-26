@@ -79,3 +79,18 @@ margin-bottom: 10px;
   margin-left: 10px;
   margin-right: 10px;
 }
+
+.panel{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+select {
+    overflow-y: auto;
+}
+
+.gauge{
+  /*width: 80%;*/
+  height: 200px;
+  margin:0px auto;
+}

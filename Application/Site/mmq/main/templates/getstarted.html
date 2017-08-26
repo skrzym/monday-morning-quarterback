@@ -13,6 +13,11 @@
           <p>
             Let's Get Started!
           </p>
+          <ul>
+          {% for item in down_dict %}
+            <li>{{ item['value'] }} | {{ item['name'] }}</li>
+          {% endfor %}
+          </ul>
         </div>
       </div>
       <form method="post" action="{{ url_for('main.run') }}">
@@ -24,7 +29,7 @@
           <div class="panel-body" id="selection-options">
             <select class="form-control text-center" id="select-down" name="down" multiple size="4">
               {% for d in down_list %}
-              <option value="{{ d }}" >{{ d }}</option>
+              <option value="{{ d['value'] }}" >{{ d['name'] }}</option>
               {% endfor %}
             </select>
           </div>
@@ -38,7 +43,7 @@
           <div class="panel-body" id="selection-options">
             <select class="form-control text-center" id="select-quarter" name="quarter" multiple size="4">
               {% for q in quarter_list %}
-              <option value="{{ q }}" >{{ q }}</option>
+              <option value="{{ q['value'] }}" >{{ q['name'] }}</option>
               {% endfor %}
             </select>
           </div>
@@ -52,7 +57,7 @@
           <div class="panel-body" id="selection-options">
             <select class="form-control text-center" id="select-clock" name="clock" multiple size="4">
               {% for c in clock_list %}
-              <option value="{{ c }}" >{{ c }}</option>
+              <option value="{{ c['value'] }}" >{{ c['name'] }}</option>
               {% endfor %}
             </select>
           </div>
@@ -66,7 +71,7 @@
           <div class="panel-body" id="selection-options">
             <select class="form-control text-center" id="select-yards" name="yards" multiple size="4">
               {% for y in yards_list %}
-              <option value="{{ y }}" >{{ y }}</option>
+              <option value="{{ y['value'] }}" >{{ y['name'] }}</option>
               {% endfor %}
             </select>
           </div>
