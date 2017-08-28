@@ -6,6 +6,7 @@ html, body{
 
 body {
   background:none;
+  padding-top: 70px;
 }
 
 .full {
@@ -18,6 +19,13 @@ body {
 
 .container-fluid {
   height:100%;
+  display:table;
+  width: 100%;
+  padding: 0;
+  max-width: 1300px;
+}
+
+.container-fluid-navbar{
   display:table;
   width: 100%;
   padding: 0;
@@ -67,6 +75,10 @@ margin-bottom: 10px;
   opacity: 1;
 }
 
+#well.header{
+  padding: 5px;
+}
+
 .btn-radio {
 	width: 100%;
 }
@@ -85,12 +97,10 @@ margin-bottom: 10px;
   padding-right: 0px;
 }
 
-select {
-    overflow-y: auto;
+.results-header{
+  margin: 0 auto;
 }
 
-.gauge{
-  /*width: 80%;*/
-  height: 200px;
-  margin:0px auto;
+select {
+    overflow-y: auto;
 }

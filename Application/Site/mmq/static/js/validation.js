@@ -31,6 +31,11 @@ $(function () {
 
 function runValidation(){
 	console.log('running validation check');
+	if (validateSelects()){
+		$('.guess-radio').slideDown(1000);
+	} else {
+		$('.guess-radio').slideUp(1000);
+	};
 	if (validateSelects() && document.getElementsByClassName('active').length > 0) {
 		document.getElementById('submit-button').disabled = false
 	};

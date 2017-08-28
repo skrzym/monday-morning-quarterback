@@ -11,7 +11,7 @@ app.config.from_object('config.DevelopmentConfig')
 limiter = Limiter(
     app,
     key_func=get_remote_address,
-    default_limits=["1500 per hour","1 per 2 seconds"]
+    default_limits=["3000 per hour","5 per 1 seconds"]
 )
 mongo.init_app(app)
 

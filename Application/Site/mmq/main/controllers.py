@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, request, url_for
+from flask import Blueprint, render_template, request, url_for, jsonify
 from config import mongo
 import pandas as pd
 import json
 from bson import json_util
 import retrieve_model as rmodel
+from collections import Counter
 
 
 main = Blueprint('main', __name__, template_folder='templates')
@@ -17,7 +18,7 @@ def index():
     return render_template('index.html')
 
 
-@main.route('/getstarted/')
+@main.route('/predict/')
 def get_started():
     down_list = [{'value':1,'name':'1st'},{'value':2,'name':'2nd'},{'value':3,'name':'3rd'},{'value':4,'name':'4th'}]
     quarter_list = [{'value':1,'name':'1st'},{'value':2,'name':'2nd'},{'value':3,'name':'3rd'},{'value':4,'name':'4th'}]
@@ -40,7 +41,7 @@ def get_started():
 
     down_dict = [{'value':1,'name':'1st'},{'value':2,'name':'2nd'},{'value':3,'name':'3rd'},{'value':4,'name':'4th'}]
 
-    return render_template('getstarted.html',
+    return render_template('predict.html',
         down_list=down_list,
         quarter_list=quarter_list,
         clock_list=clock_list,
@@ -51,8 +52,8 @@ def get_started():
     )
 
 
-@main.route('/run/', methods=['POST'])
-def run():
+@main.route('/results/', methods=['POST'])
+def results():
     down = request.form['down']
     quarter = request.form['quarter']
     clock = request.form['clock']
@@ -100,7 +101,7 @@ def run():
         nflstats=[None]#nflstats
     )
     except:
-        return "fail"
+        return "Something went wrong..."
 
 
 @main.route('/stats/')
@@ -131,9 +132,11 @@ def guessData():
         except:
             pass
     print(search_dict)
-    s=[data for data in mongo.db.scenarios.find(search_dict)]
-    print(s)
-    return json.dumps(s, default=json_util.default)
+    s=[data['guess'] for data in mongo.db.scenarios.find(search_dict)]
+    options = ['pass', 'run', 'punt', 'fg', 'kneel']
+    count = {option:s.count(option) for option in options}
+    print(count)
+    return json.dumps(count, default=json_util.default)
 
 
 @main.route('/data/nfl/')
@@ -154,9 +157,11 @@ def nflData():
             except:
                 pass
 
-    s=[data for data in mongo.db.nfldata.find(search_dict)]
-
-    return json.dumps(s, default=json_util.default)
+    s=[data["PlayType"] for data in mongo.db.nfldata.find(search_dict)]
+    options = ['pass', 'run', 'punt', 'fg', 'kneel']
+    count = {option:s.count(option) for option in options}
+    print(count)
+    return json.dumps(count, default=json_util.default)
 
 
 @main.route('/api/predict/')
@@ -167,12 +172,24 @@ def apiPredict():
             arg_dict[key] = int(arg_dict[key])
         except:
             pass
-
-    return rmodel.predict_proba(
+    calculations = [
+        {name:rmodel.predict_group_proba(
+            arg_dict['quarter'],
+            arg_dict['down'],
+            arg_dict['yards'],
+            arg_dict['clock'],
+            arg_dict['field'],
+            arg_dict['score'],
+            name)
+        } for name in ['quarter', 'down', 'yards', 'timeunder', 'yrdline100', 'scorediff']
+    ]
+    calculations.append({'request':rmodel.predict_proba(
         arg_dict['quarter'],
         arg_dict['down'],
         arg_dict['yards'],
         arg_dict['clock'],
         arg_dict['field'],
-        arg_dict['score']
-    )
+        arg_dict['score'],
+        False)
+    })
+    return jsonify(calculations)
