@@ -104,3 +104,8 @@ margin-bottom: 10px;
 select {
     overflow-y: auto;
 }
+
+.prediction-chart{
+  width:100%;
+  height:auto;
+}

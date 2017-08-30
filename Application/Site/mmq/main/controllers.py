@@ -65,7 +65,6 @@ def results():
 
     score = str(int(score) * int(sign))
 
-
     # Store scenario in mongodb
     scenario = {
     'down':     int(down),
@@ -87,9 +86,11 @@ def results():
     # Pull NFL Stats from MongoDB
     #nflstats = mongo.db.nfldata.find()
 
+    guesses = {'pass':'Pass', 'run':'Run', 'punt':'Punt', 'fg':'Field Goal', 'kneel': 'QB Kneel'}
 
     try:
         return render_template('results.html',
+        guess_title = guesses[guess],
         down=down,
         quarter=quarter,
         clock=clock,
@@ -100,8 +101,8 @@ def results():
         scenarios=[None],#scenarios,
         nflstats=[None]#nflstats
     )
-    except:
-        return "Something went wrong..."
+    except Exception as e:
+        return "Something went wrong..." + str(e)
 
 
 @main.route('/stats/')
@@ -158,6 +159,7 @@ def nflData():
                 pass
 
     s=[data["PlayType"] for data in mongo.db.nfldata.find(search_dict)]
+    print(s)
     options = ['pass', 'run', 'punt', 'fg', 'kneel']
     count = {option:s.count(option) for option in options}
     print(count)

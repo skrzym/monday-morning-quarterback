@@ -1,6 +1,9 @@
-//q
-//	.defer(d3.json, "/data/nfl/?down=1&quarter=4&PlayType=kneel")
-//	.await(makeGraphs);
+
+//Result Colors
+var colors = {'pass':'#4daf4a','run':'#377eb8','punt':'#e41a1c','fg':'#ff7f00','kneel':'#984ea3'};
+console.log(colors);
+console.log(colors['pass']);
+
 function makeTable(error, guessData){
     columns = [{
         field: 'PlayType',
@@ -34,272 +37,310 @@ function makeTable(error, guessData){
     });
   };
 
-function makeGraphs(error, guessJSON, nflJSON, modelJSON) {
-	if (error) throw error;
-	//Store the returned NFL JSON data
-	var guessResults = guessJSON;
-	var nflResults = nflJSON;
-	var modelResults = [modelJSON];
-	
-	console.log('guessJSON', guessResults);
-	console.log('nflJSON', nflResults);
-	console.log('modelJSON', modelResults);
-	
-	//Alert the user to the number of returned results
-	if (guessResults.length == 0){
-		alert('guessJSON: ' + guessResults.length + ' results returned!')
-	} else if(nflResults.length == 0) {
-		alert('nflJSON: ' + nflResults.length + ' results returned!')
-	} else if(modelResults.length == 0){
-		alert('modelJSON: ' + modelResults.length + ' results returned!')
-	}
-	
-	// Create Charts
-	var guessTable = dc.dataTable('#dc-guess-table');
-	
-	//Crossfilter
-	var guessDX = crossfilter(guessResults);
-	var guessDimension = guessDX.dimension(function(d){
-		return d;
-	});
-	
-	var guessAll = guessDX.groupAll();
+function createModelChart(prediction){
+  console.log('Creating Model Chart', prediction);
+  Highcharts.chart('prediction-chart', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: 0,
+        plotShadow: false,
+        spacingTop: 0,
+        spacingBottom: 0,
+        spacingLeft: 0,
+        spacingRight: 0,
+        height:300,
+    },
+    title: {
+        text: '',
+        align: 'center',
+        //verticalAlign: 'top',
+        //y: 40,
+    },
+    subtitle: {
+        text: 'Classification probabilities for each decision.',
+        y: 30,
+        style: {
+          fontSize: '13px',
+          fontFamily: '"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif'
+        }
+    },
+    tooltip: {
+        pointFormat: '{point.percentage:.1f}%'
+    },
+    plotOptions: {
+        pie: {
+            stickyTracking: true,
+            dataLabels: {
+                enabled: true,
+                distance: 25,
+                style: {
+                    fontWeight: 'bold',
+                    color: 'black'
+                }
+            },
+            startAngle: -90,
+            endAngle: 90,
+            center: ['50%', '85%']
+        }
+    },
 
-	// Guess DataTable Details
-	guessTable
-	.width(960)
-	.height(800)
-    .dimension(guessDimension)
-    .group(function(d) { return d.guess; })
-	//.showGroups(true)
-    .size(100)
-    .columns([
-	  'guess',
-      'down',
-      'quarter',
-      'clock',
-      'yards',
-      'field',
-	  'score'
-    ])
-    .sortBy(function(d){ return d.guess; })
-    .order(d3.ascending);
-	
-	dc.renderAll();
+    legend: {
+      enabled: true
+    },
+
+    credits: false,
+
+    series: [{
+        type: 'pie',
+        name: 'Browser share',
+        innerSize: '50%',
+        showInLegend: true,
+        data: [
+            { name: 'Pass' ,
+              y: parseFloat(prediction.Pass),
+              color: colors.pass,
+              dataLabels: {enabled: parseFloat(prediction.Pass) > 10}
+            },
+            { name: 'Run',
+              y: parseFloat(prediction.Run),
+              color: colors.run,
+              dataLabels: {enabled: parseFloat(prediction.Run) > 10}
+            },
+            { name: 'Punt',
+              y: parseFloat(prediction.Punt),
+              color: colors.punt,
+              dataLabels: {enabled:parseFloat(prediction.Punt) > 10}
+            },
+            { name: 'FG',
+              y: parseFloat(prediction['Field Goal']),
+              color: colors.fg,
+              dataLabels: {enabled:parseFloat(prediction['Field Goal']) > 10}
+            },
+            { name: 'Kneel',
+              y: parseFloat(prediction['QB Kneel']),
+              color: colors.kneel,
+              dataLabels: {enabled:parseFloat(prediction['QB Kneel']) > 10}
+            }
+        ]
+    }]
+  });
+};
+
+function createNFLChart(data){
+  console.log('Creating NFL Chart', data);
+  $('#nfl-table').bootstrapTable({
+        data: [
+          {
+            'playtype':'Pass',
+            'count':parseFloat(data.pass)
+          },
+          {
+            'playtype':'Run',
+            'count':parseFloat(data.run)
+          },
+          {
+            'playtype':'Punt',
+            'count':parseFloat(data.punt)
+          },
+          {
+            'playtype':'Field Goal',
+            'count':parseFloat(data.fg)
+          },
+          {
+            'playtype':'QB Kneel',
+            'count':parseFloat(data.kneel)
+          },
+        ]
+    });
+};
+
+function createGuessChart(data){
+  console.log('Creating Guess Chart', data);
+  $('#guess-table').bootstrapTable({
+        data: [
+          {
+            'playtype':'Pass',
+            'count':parseFloat(data.pass)
+          },
+          {
+            'playtype':'Run',
+            'count':parseFloat(data.run)
+          },
+          {
+            'playtype':'Punt',
+            'count':parseFloat(data.punt)
+          },
+          {
+            'playtype':'Field Goal',
+            'count':parseFloat(data.fg)
+          },
+          {
+            'playtype':'QB Kneel',
+            'count':parseFloat(data.kneel)
+          },
+        ]
+    });
+};
+
+function makeData(data){
+  var filters = ['Pass','Run','Punt','Field Goal','QB Kneel'];
+  var newData = {};
+  for (f in filters){
+    newData[filters[f]]=[];
+  };
+  for(item in data){
+    for(f in filters){
+      newData[filters[f]].push([item,parseFloat(data[item][filters[f]])]);
+    };
+  };
+  return newData;
+};
+
+function makeDetailChart(div, title, xAxisTitle, myData, myCategories){
+  Highcharts.chart(div + '-detail-chart', {
+		title:{
+    		text:'Prediction Details - ' + title
+    },
+    xAxis: {
+        //minPadding: 0.05,
+        //maxPadding: 0.05,
+        allowDecimals: false,
+        labels: {
+                formatter: function() {
+                    return myCategories[this.value];
+                }
+        },
+        title: {
+          text: xAxisTitle
+        },
+        plotLines: [{
+          color: '#000000', // Red
+          width: 2,
+          value: parseInt($('.sel-' + div).text()), // Position, you'll have to translate this to the values on your x axis
+          zIndex:5
+          /*label: {
+                useHTML: true,
+                text: ' Selected Value ',
+                verticalAlign: 'bottom',
+                textAlign: 'right',
+                y:-15,
+                x: -12,
+                style: {
+                  fontWeight: 'bold',
+                  fontSize: '15px',
+                  color: 'black'
+                }
+            }*/
+        }]
+    },
+    tooltip: {
+      pointFormat: '<span>{series.name}</span>: <b>{point.percentage:.2f}%</b>',
+      split: true
+    },
+    plotOptions: {
+        area: {
+            stacking: 'percent',
+            lineColor: '#ffffff',
+            lineWidth: 1,
+            marker: {
+                lineWidth: 1,
+                lineColor: '#ffffff'
+            }
+        }
+    },
+    credits:false,
+    series: [{
+        marker: {enabled: false},
+    		name:'Pass',
+    		type:'area',
+        data: myData.Pass,
+        color:colors.pass
+    },{
+        marker: {enabled: false},
+        name:'Run',
+    		type:'area',
+        data: myData.Run,
+        color:colors.run
+    },{
+        marker: {enabled: false},
+    		name:'Punt',
+    		type:'area',
+        data: myData.Punt,
+        color:colors.punt
+    },{
+        marker: {enabled: false},
+    		name:'FG',
+    		type:'area',
+        data: myData['Field Goal'],
+        color:colors.fg
+    },{
+        marker: {enabled: false},
+    		name:'Kneel',
+    		type:'area',
+        data: myData['QB Kneel'],
+        color:colors.kneel
+    }]
+  });
+}
+
+function createDetailCharts(data){
+  console.log('Creating Detail Chart', data);
+
+  //Chart Series Setup
+  var qtrData = makeData(data[0]['quarter']);
+  var downData = makeData(data[1]['down']);
+  var yardsData = makeData(data[2]['yards']);
+  var clockData = makeData(data[3]['timeunder']);
+  var fieldData = makeData(data[4]['yrdline100']);
+  var scoreData = makeData(data[5]['scorediff']);
+
+  scoreData.Pass.sort(function(a,b){return parseInt(a[0])-parseInt(b[0]);})
+  scoreData.Run.sort(function(a,b){return parseInt(a[0])-parseInt(b[0]);})
+  scoreData.Punt.sort(function(a,b){return parseInt(a[0])-parseInt(b[0]);})
+  scoreData['Field Goal'].sort(function(a,b){return parseInt(a[0])-parseInt(b[0]);})
+  scoreData['QB Kneel'].sort(function(a,b){return parseInt(a[0])-parseInt(b[0]);})
+
+  var qtrCategories = [1,2,3,4];
+  var downCategories = [1,2,3,4];
+  var yardsCategories = [];
+  for (i=25;i>-1;i--){yardsCategories.push(i);};
+  var clockCategories = [];
+  for (i=15;i>0;i--){clockCategories.push(i);};
+  var fieldCategories = [];
+  for (i=100;i>-1;i--){fieldCategories.push(i);};
+  var scoreCategories = [];
+  for (i=-60;i<61;i++){scoreCategories.push(i);};
+
+  for (item in yardsData){yardsData[item] = yardsData[item].reverse();};
+  for (item in clockData){clockData[item] = clockData[item].reverse();};
+  for (item in fieldData){fieldData[item] = fieldData[item].reverse();};
+
+  //Quarter Chart
+  makeDetailChart('quarter', 'Quarter', 'Quarter', qtrData, qtrCategories);
+  makeDetailChart('down', 'Down', 'Down', downData, downCategories);
+  makeDetailChart('yards', 'Yards to Go', 'Yards', yardsData, yardsCategories);
+  makeDetailChart('clock', 'Time Left', 'Minutes', clockData, clockCategories);
+  makeDetailChart('field', 'Yard Line', 'Yard Line', fieldData, fieldCategories);
+  makeDetailChart('score', 'Score Delta', 'Point Difference', scoreData, scoreCategories);
 };
 
 
-//window.location.reload(true)
-function makeGauges(error, modelResult){
-		console.log(modelResult)
-		
-		var titleStyle={
-			"font-weight": "bold",
-			"font-size": "large",
-			"color": "black"
-		};
-		
-		var gaugeOptions = {
+function makeCharts(error, modelJSON, guessJSON, nflJSON) {
+	if (error) throw error;
+	//Store the returned NFL JSON data
+	//Alert the user to the number of returned results
+	if (guessJSON.length == 0){
+		console.log('guessJSON: ' + guessJSON.length + ' results returned!')
+	} else if(nflJSON.length == 0) {
+		console.log('nflJSON: ' + nflJSON.length + ' results returned!')
+	} else if(modelJSON.length == 0){
+		console.log('modelJSON: ' + modelJSON.length + ' results returned!')
+	}
 
-		chart: {
-			type: 'solidgauge'
-		},
-
-		title: null,
-
-		pane: {
-			center: ['50%', '85%'],
-			size: '100%',
-			startAngle: -90,
-			endAngle: 90,
-			background: {
-				backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
-				innerRadius: '60%',
-				outerRadius: '100%',
-				shape: 'arc'
-			}
-		},
-
-		tooltip: {
-			enabled: false
-		},
-
-		// the value axis
-		yAxis: {
-			stops: [
-				[0.25, '#DF5353'], // red
-				[0.50, '#DDDF0D'], // yellow
-				[0.90, '#55BF3B'] // green
-			],
-			lineWidth: 0,
-			minorTickInterval: null,
-			tickAmount: 1,
-			title: {
-				y: -50,
-				style: {
-					"font-weight": "bold",
-					"font-size": "large",
-					"color": "black"
-				}
-			},
-			labels: {
-				y: 16
-			}
-		},
-
-		plotOptions: {
-			solidgauge: {
-				dataLabels: {
-					y: 5,
-					borderWidth: 0,
-					useHTML: true
-				}
-			}
-		}
-	};
-
-	// The Pass gauge
-	var chartPass = Highcharts.chart('gauge-pass', Highcharts.merge(gaugeOptions, {
-		yAxis: {
-			min: 0,
-			max: 100,
-			title: {
-				text: 'Pass - ' + modelResult.Pass + '%'
-			}
-		},
-
-		credits: {
-			enabled: false
-		},
-
-		series: [{
-			name: 'Pass',
-			data: [parseFloat(modelResult.Pass)],
-			dataLabels: {
-				format: '<div style="text-align:center"><span style="font-size:15px;color:' +
-					((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-					   '<span style="font-size:12px;color:silver">%</span></div>'
-			},
-			tooltip: {
-				valueSuffix: ' %'
-			}
-		}]
-
-	}));
-	
-	// The Run gauge
-	var chartRun = Highcharts.chart('gauge-run', Highcharts.merge(gaugeOptions, {
-		yAxis: {
-			min: 0,
-			max: 100,
-			title: {
-				text: 'Run'
-			}
-		},
-
-		credits: {
-			enabled: false
-		},
-
-		series: [{
-			name: 'Run',
-			data: [parseFloat(modelResult.Run)],
-			dataLabels: {
-				format: '<div style="text-align:center"><span style="font-size:15px;color:' +
-					((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-					   '<span style="font-size:12px;color:silver">%</span></div>'
-			},
-			tooltip: {
-				valueSuffix: ' %'
-			}
-		}]
-
-	}));
-	
-	// The Punt gauge
-	var chartPunt = Highcharts.chart('gauge-punt', Highcharts.merge(gaugeOptions, {
-		yAxis: {
-			min: 0,
-			max: 100,
-			title: {
-				text: 'Punt'
-			}
-		},
-
-		credits: {
-			enabled: false
-		},
-
-		series: [{
-			name: 'Punt',
-			data: [parseFloat(modelResult.Punt)],
-			dataLabels: {
-				format: '<div style="text-align:center"><span style="font-size:15px;color:' +
-					((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-					   '<span style="font-size:12px;color:silver">%</span></div>'
-			},
-			tooltip: {
-				valueSuffix: ' %'
-			}
-		}]
-
-	}));
-	
-	// The Field Goal gauge
-	var chartFg = Highcharts.chart('gauge-fg', Highcharts.merge(gaugeOptions, {
-		yAxis: {
-			min: 0,
-			max: 100,
-			title: {
-				text: 'Field Goal'
-			}
-		},
-
-		credits: {
-			enabled: false
-		},
-
-		series: [{
-			name: 'Field Goal',
-			data: [parseFloat(modelResult['Field Goal'])],
-			dataLabels: {
-				format: '<div style="text-align:center"><span style="font-size:15px;color:' +
-					((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-					   '<span style="font-size:12px;color:silver">%</span></div>'
-			},
-			tooltip: {
-				valueSuffix: ' %'
-			}
-		}]
-
-	}));
-	
-	// The QB Kneel gauge
-	var chartKneel = Highcharts.chart('gauge-kneel', Highcharts.merge(gaugeOptions, {
-		yAxis: {
-			min: 0,
-			max: 100,
-			title: {
-				text: 'QB Kneel'
-			}
-		},
-
-		credits: {
-			enabled: false
-		},
-
-		series: [{
-			name: 'QB Kneel',
-			data: [parseFloat(modelResult['QB Kneel'])],
-			dataLabels: {
-				format: '<div style="text-align:center"><span style="font-size:15px;color:' +
-					((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-					   '<span style="font-size:12px;color:silver">%</span></div>'
-			},
-			tooltip: {
-				valueSuffix: ' %'
-			}
-		}]
-
-	}));
+	// Create Charts
+  createModelChart(modelJSON[6].request);
+  createNFLChart(nflJSON);
+  createGuessChart(guessJSON);
+  createDetailCharts(modelJSON);
+  $('.chart-stage').slideDown(1000);
 };
