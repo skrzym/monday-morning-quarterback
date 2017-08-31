@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from flask import Blueprint, render_template, request, url_for, jsonify
 from config import mongo
 import pandas as pd
@@ -42,11 +43,36 @@ def get_started():
     down_dict = [{'value':1,'name':'1st'},{'value':2,'name':'2nd'},{'value':3,'name':'3rd'},{'value':4,'name':'4th'}]
 
     return render_template('predict.html',
+=======
+from flask import Blueprint, render_template, request, url_for
+from config import mongo
+
+main = Blueprint('main', __name__, template_folder='templates')
+
+@main.route('/')
+def index():
+    mongo.db.visits.insert_one({"foo":"bar"})
+    visits = mongo.db.visits.find_one()
+    return str(visits)
+    #return render_template('index.html')
+
+@main.route('/getstarted/')
+def get_started():
+    down_list = ['1st','2nd','3rd','4th']
+    quarter_list = ['1st','2nd','3rd','4th']
+    clock_list = ['> 15 min', '> 10 min', '> 5 min', '> 2 min', '< 2 min', '< 1 min']
+    yards_list = ['inches', 'goal', '1', '2', '3', '4', '5', '6', '7' ,'8', '9', '10', '> 10']
+    field_list = range(0,105,5)
+    score_list = range(-60,61,1)
+
+    return render_template('getstarted.html',
+>>>>>>> master
         down_list=down_list,
         quarter_list=quarter_list,
         clock_list=clock_list,
         yards_list=yards_list,
         field_list=field_list,
+<<<<<<< HEAD
         score_list=score_list,
         down_dict=down_dict
     )
@@ -54,12 +80,20 @@ def get_started():
 
 @main.route('/results/', methods=['POST'])
 def results():
+=======
+        score_list=score_list
+    )
+
+@main.route('/run/', methods=['POST'])
+def run():
+>>>>>>> master
     down = request.form['down']
     quarter = request.form['quarter']
     clock = request.form['clock']
     yards = request.form['yards']
     field = request.form['field']
     score = request.form['score']
+<<<<<<< HEAD
     sign  = request.form['sign']
     guess = request.form['guess']
 
@@ -91,6 +125,25 @@ def results():
     try:
         return render_template('results.html',
         guess_title = guesses[guess],
+=======
+    guess = request.form['guess']
+
+    # Store scenario in mongodb
+    scenario = {
+    'down':     down,
+    'quarter':  quarter,
+    'clock':    clock,
+    'yards':    yards,
+    'field':    field,
+    'score':    score,
+    'guess':    guess
+    }
+    mongo.db.scenarios.insert_one(scenario)
+    scenarios = mongo.db.scenarios.find()
+
+    try:
+        return render_template('results.html',
+>>>>>>> master
         down=down,
         quarter=quarter,
         clock=clock,
@@ -98,6 +151,7 @@ def results():
         field=field,
         score=score,
         guess=guess,
+<<<<<<< HEAD
         scenarios=[None],#scenarios,
         nflstats=[None]#nflstats
     )
@@ -195,3 +249,9 @@ def apiPredict():
         False)
     })
     return jsonify(calculations)
+=======
+        scenarios=scenarios
+    )
+    except:
+        return "fail"
+>>>>>>> master

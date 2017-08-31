@@ -5,6 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Monday Morning Quarterback</title>
+<<<<<<< HEAD
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.2/dc.css" />
 	<!--JS Links-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
@@ -25,11 +26,20 @@
 	<script src="https://code.highcharts.com/highcharts.src.js"></script>
 	<!-- Stylesheet and Bootstrap using 'Paper' theme: http://bootswatch.com/paper/-->
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
+=======
+	<!-- Bootstrap Links -->
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!-- Stylesheet and Bootstrap using 'Paper' theme: http://bootswatch.com/paper/-->
+>>>>>>> master
 	<link href='../static/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
 	<link href='../static/css/stylesheet.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
+<<<<<<< HEAD
 	<nav class="navbar navbar-default navbar-fixed-top">
 	  <div class="container">
 	    <!-- Brand and toggle get grouped for better mobile display -->
@@ -67,4 +77,25 @@
 	{% block body %}
 	{% endblock %}
 </body>
+=======
+	{% block body %}
+	{% endblock %}
+</body>
+
+<script>
+$(function () {
+    $('.btn-radio').click(function(e) {
+        $('.btn-radio').not(this).removeClass('active')
+    		.siblings('input').prop('checked',false)
+        .siblings('.img-radio').css('opacity','0.75')
+				.parent('#well').css('border','3px solid rgb(245,245,245)');
+    	$(this).addClass('active')
+        .siblings('input').prop('checked',true)
+    		.siblings('.img-radio').css('opacity','1')
+				.parent('#well').css('border','3px solid #0c7cd5');
+    });
+});
+</script>
+
+>>>>>>> master
 </html>
