@@ -143,5 +143,5 @@ def build_gradient_boosted_regression_trees(X_train, y_train, n_estimators=100,
     return clf
 
 
-def store_model(model, file_name):
-    joblib.dump(model, '../Data/models/{}.pkl'.format(file_name))
+def store_model(model, file_name, protocol=3):
+    joblib.dump(model, '../Data/models/{}.pkl'.format(file_name),protocol=protocol)
