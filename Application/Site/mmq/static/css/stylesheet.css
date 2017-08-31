@@ -6,6 +6,10 @@ html, body{
 
 body {
   background:none;
+<<<<<<< HEAD
+  padding-top: 70px;
+=======
+>>>>>>> master
 }
 
 .full {
@@ -21,6 +25,17 @@ body {
   display:table;
   width: 100%;
   padding: 0;
+<<<<<<< HEAD
+  max-width: 1300px;
+}
+
+.container-fluid-navbar{
+  display:table;
+  width: 100%;
+  padding: 0;
+  max-width: 1300px;
+=======
+>>>>>>> master
 }
 
 .row-fluid {
@@ -35,6 +50,34 @@ body {
 }
 
 #panel-top{
+<<<<<<< HEAD
+border-radius: 5px;
+margin-top: 0px;
+}
+
+#panel-bottom{
+border-radius: 5px;
+margin-bottom: 10px;
+}
+
+#landing.jumbotron{
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 5px;
+  margin-top: 30px;
+}
+
+#selection-title.lead{
+  text-decoration: underline;
+  margin-bottom: 0px;
+}
+
+#selection-options.panel-body{
+  padding-top: 0px;
+}
+
+#well.well{
+  border-radius: 5px;
+=======
 border-radius: 25px;
 margin-top: 0px;
 }
@@ -51,11 +94,19 @@ margin-top: 0px;
 
 #well.well{
   border-radius: 25px;
+>>>>>>> master
   border: 3px solid rgb(245, 245, 245);
   transition: .5s ease;
   opacity: 1;
 }
 
+<<<<<<< HEAD
+#well.header{
+  padding: 5px;
+}
+
+=======
+>>>>>>> master
 .btn-radio {
 	width: 100%;
 }
@@ -63,3 +114,29 @@ margin-top: 0px;
 	opacity: 0.75;
 	margin-bottom: 5px;
 }
+<<<<<<< HEAD
+
+.chart-stage{
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.panel{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.results-header{
+  margin: 0 auto;
+}
+
+select {
+    overflow-y: auto;
+}
+
+.prediction-chart{
+  width:100%;
+  height:auto;
+}
+=======
+>>>>>>> master

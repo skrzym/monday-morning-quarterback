@@ -4,6 +4,229 @@
 	http://stackoverflow.com/a/27500365/1459035 -->
   <!-- ID priority solution for safe css override from:
    http://stackoverflow.com/a/27704409/1459035 -->
+<<<<<<< HEAD
+
+   <!-- INPUTS -->
+  <div class="container-fluid" style="margin-top:15px;">
+    <div class='row'>
+      <div class="col-lg-offset-3 col-lg-6 col-sm-offset-2 col-sm-8 col-xs-offset-0 col-xs-12">
+        <div class="well text-center header" id="well">
+          <h3 class='results-header'>You Selected: <b>{{ guess_title }}</b></h3>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-offset-0 col-lg-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6">
+        <div class="well text-center" id="well">
+          <p class="lead" id='selection-title'>Quarter</p>
+          <p class='sel-quarter' style="font-size:24px; margin:0 auto;">{{ quarter }}</p>
+        </div>
+      </div>
+      <div class="col-lg-offset-0 col-lg-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6">
+        <div class="well text-center" id="well">
+          <p class="lead" id='selection-title'>Time Left</p>
+          <p class='sel-clock' style="font-size:24px; margin:0 auto;">{{ clock }}</p>
+        </div>
+      </div>
+      <div class="col-lg-offset-0 col-lg-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6">
+        <div class="well text-center" id="well">
+          <p class="lead" id='selection-title'>Down</p>
+          <p class='sel-down' style="font-size:24px; margin:0 auto;">{{ down }}</p>
+        </div>
+      </div>
+      <div class="col-lg-offset-0 col-lg-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6">
+        <div class="well text-center" id="well">
+          <p class="lead" id='selection-title'>Yards to Go</p>
+          <p class='sel-yards' style="font-size:24px; margin:0 auto;">{{ yards }}</p>
+        </div>
+      </div>
+      <div class="col-lg-offset-0 col-lg-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6">
+        <div class="well text-center" id="well">
+          <p class="lead" id='selection-title'>Yard Line</p>
+          <p class='sel-field' style="font-size:24px; margin:0 auto;">{{ field }}</p>
+        </div>
+      </div>
+      <div class="col-lg-offset-0 col-lg-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6">
+        <div class="well text-center" id="well">
+          <p class="lead" id='selection-title'>Score Delta</p>
+          <p class='sel-score' style="font-size:24px; margin:0 auto;">{{ score }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class='row'>
+      <div class="col-lg-offset-3 col-lg-6 col-sm-offset-2 col-sm-8 col-xs-offset-0 col-xs-12">
+        <div class="well text-center header" id="well">
+          <h3 class='results-header'>Results</h3>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class=" col-lg-offset-0 col-lg-4 col-sm-offset-1 col-sm-10 col-xs-offset-0 col-xs-12">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <h4 class="results-header">Model Results</h4>
+          </div>
+          <div class="chart-stage">
+            <div class="panel-body">
+              <div id="prediction-chart"></div>
+            </div>
+          </div>
+          <!--<div class="panel-body">
+          </div>-->
+        </div>
+      </div>
+      <div class=" col-lg-offset-0 col-lg-4 col-sm-offset-1 col-sm-10 col-xs-offset-0 col-xs-12">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <h4 class="results-header">Matching NFL Plays</h4>
+          </div>
+          <div class="chart-stage">
+            <div class="panel-body">
+              <p class='results-header' style="padding:14px">Matching NFL plays since 2009 grouped by play type.</p>
+              <!-- <div id="nfl-chart"></div> -->
+              <table id="nfl-table">
+                <thead>
+                  <tr>
+                    <th data-field="playtype">Play Type</th>
+                    <th data-field="count">Count</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class=" col-lg-offset-0 col-lg-4 col-sm-offset-1 col-sm-10 col-xs-offset-0 col-xs-12">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <h4 class="results-header">Matching User Guesses</h4>
+          </div>
+          <div class="chart-stage">
+            <div class="panel-body">
+              <p class='results-header' style="padding:14px">Matching MMQ user guesses grouped by play type.</p>
+              <table id="guess-table">
+                <thead>
+                  <tr>
+                    <th data-field="playtype">Play Type</th>
+                    <th data-field="count">Count</th>
+                  </tr>
+                </thead>
+              </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel" id="panel-top">
+        <div class="panel-heading text-center">
+          Detailed View of Predictions
+        </div>
+        <!--
+        <div class="chart-stage">
+          <div class="panel-body">
+
+          </div>
+        </div>-->
+        <div class="panel-body">
+          <div class="bs-example bs-example-tabs" data-example-id="togglable-tabs">
+            <!-- Tabs -->
+            <ul class="nav nav-tabs nav-justified" id="myTabs" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#quarter" id="quarter-tab" role="tab" data-toggle="tab" aria-controls="quarter" aria-expanded="true">Quarter</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#down" id="down-tab" role="tab" data-toggle="tab" aria-controls="down" aria-expanded="true">Down</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#yards" id="yards-tab" role="tab" data-toggle="tab" aria-controls="yards" aria-expanded="true">Yards to Go</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#clock" id="clock-tab" role="tab" data-toggle="tab" aria-controls="clock" aria-expanded="true">Time Left</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#field" id="field-tab" role="tab" data-toggle="tab" aria-controls="field" aria-expanded="true">Yard Line</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#score" id="score-tab" role="tab" data-toggle="tab" aria-controls="score" aria-expanded="true">Score Delta</a>
+              </li>
+            </ul>
+            <!-- Tab Content -->
+            <div class="tab-content" id="myTabContent">
+              <div class="tab-pane fade active in" role="tabpanel" id="quarter" aria-labelledby="quarter-tab">
+                <div id="quarter-detail-chart"></div>
+              </div>
+              <div class="tab-pane fade" role="tabpanel" id="down" aria-labelledby="down-tab">
+                <div id="down-detail-chart"></div>
+              </div>
+              <div class="tab-pane fade" role="tabpanel" id="yards" aria-labelledby="yards-tab">
+                <div id="yards-detail-chart"></div>
+              </div>
+              <div class="tab-pane fade" role="tabpanel" id="clock" aria-labelledby="clock-tab">
+                <div id="clock-detail-chart"></div>
+              </div>
+              <div class="tab-pane fade" role="tabpanel" id="field" aria-labelledby="field-tab">
+                <div id="field-detail-chart"></div>
+              </div>
+              <div class="tab-pane fade" role="tabpanel" id="score" aria-labelledby="score-tab">
+                <div id="score-detail-chart"></div>
+              </div>
+            </div>
+
+          </div>
+          <div class="panel-body">
+            <p>
+              Each tab above will show you how the model's predictions change if you tweak that input but keep all other inputs the same.
+              <br>
+              <i> The black line represents the originally selected input for this scenario.</i>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Charts -->
+  <script src="https://code.highcharts.com/highcharts-more.js"></script>
+  <script src="../static/js/graphs.js"></script>
+
+  <!-- URL Filters -->
+  <script>
+  console.log('chart stage is hidden!');
+  $('.chart-stage').hide();
+
+  down = "{{ down }}"
+  quarter = "{{ quarter }}"
+  clock = "{{ clock }}"
+  yards = "{{ yards }}"
+  field = "{{ field }}"
+  score = "{{ score }}"
+  PlayType = "{{ guess }}"
+
+  console.log(down + ', ' + quarter + ', '+ clock + ', '+ yards + ', '+ field + ', '+ score + ', ' + PlayType)
+
+  //makePredictionChart(quarter, down, clock, yards, field, score);
+
+  var guessURL = '/data/guesses/?down='+down+'&quarter='+quarter+'&clock='+clock+'&yards='+yards+'&field='+field+'&score='+score;
+  var nflURL = '/data/nfl/?down='+down+'&quarter='+quarter+'&clock='+clock+'&yards='+yards+'&field='+field+'&score='+score;
+  var predictionURL = '/api/predict/?quarter='+quarter+'&down='+down+'&clock='+clock+'&yards='+yards+'&field='+field+'&score='+score;
+
+  q
+   .defer(d3.json, predictionURL)
+   .defer(d3.json, guessURL)
+   .defer(d3.json, nflURL)
+   //.await(makeGraphs)
+   .await(makeCharts);
+
+  </script>
+
+
+=======
   <div class="container-fluid">
     <div class="row-fluid centering" style="margin-top:10px;">
       <!--Scenario Selection -->
@@ -102,4 +325,5 @@
       </div>
     </div>
   </div>
+>>>>>>> master
 {% endblock %}

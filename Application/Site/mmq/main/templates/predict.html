@@ -1,0 +1,172 @@
+  {% extends 'layout.html' %}
+	{% block body %}
+	<!-- Keep jumbotron in center of page solution:
+	http://stackoverflow.com/a/27500365/1459035 -->
+  <!-- ID priority solution for safe css override from:
+   http://stackoverflow.com/a/27704409/1459035 -->
+  <div class="container-fluid">
+    <div class="row-fluid centering" style="margin-top:10px;">
+      <!--Scenario Selection -->
+      <div class="col-md-12 col-md-offset-0 col-xs-12" >
+        <div class="jumbotron" id="landing">
+          <h2 class="text-center">Build The Scenario</h2>
+          <p>
+            1) Build your scenario by selecting a choice for each option below.
+          </br>
+            2) Select your guess for what the best option would be for this scenario.
+          </br>
+            3) Click "Submit" to run your scenario through the prediciton model and see how you did.
+          </p>
+        </div>
+      </div>
+      <form method="post" action="{{ url_for('main.results') }}">
+      <div class="col-md-offset-0 col-md-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6" >
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection-title'>Quarter</p>
+          </div>
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-quarter" name="quarter" multiple size="6">
+              {% for q in quarter_list %}
+              <option value="{{ q['value'] }}" >{{ q['name'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6" >
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection-title'>Time Left</p>
+          </div>
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-clock" name="clock" multiple size="6">
+              {% for c in clock_list %}
+              <option value="{{ c['value'] }}" >{{ c['name'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6" >
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection-title'>Down</p>
+          </div>
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-down" name="down" multiple size="6">
+              {% for d in down_list %}
+              <option value="{{ d['value'] }}" >{{ d['name'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6" >
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection-title'>Yards to Go</p>
+          </div>
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-yards" name="yards" multiple size="6">
+              {% for y in yards_list %}
+              <option value="{{ y['value'] }}" >{{ y['name'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection-title'>Yard Line</p>
+          </div>
+          <div class="panel-body" id="selection-options">
+            <select class="form-control text-center" id="select-field" name="field" multiple size="6">
+              {% for f in field_list %}
+              <option value="{{ f }}" >{{ f }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-sm-4 col-xs-6">
+        <div class="panel" id="panel-top">
+          <div class="panel-heading text-center">
+            <p class="lead" id='selection-title'>Score Delta</p>
+          </div>
+          <div class="panel-body" id="selection-options">
+            <div style="text-align:center; margin-bottom:1px;">
+              <input type="radio" name="sign" value="1" checked> <b>Up</b>
+              <input type="radio" name="sign" value="-1" style="padding-left:5px;"><b>Dn</b>
+            </div>
+            <select class="form-control text-center" id="select-score" name="score" multiple size="5">
+              {% for s in score_list %}
+              <option value="{{ s }}" >{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6 guess-radio">
+        <div class="well text-center" id="well">
+          <img src="../static/img/pass.png" class="img-responsive img-radio">
+          <button type="button" class="btn btn-primary btn-radio">Pass</button>
+          <input type="checkbox" id="pass-item" class="hidden" name="guess" value="pass">
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6 guess-radio">
+        <div class="well text-center" id="well">
+          <img src="../static/img/run.png" class="img-responsive img-radio">
+          <button type="button" class="btn btn-primary btn-radio">Run</button>
+          <input type="checkbox" id="run-item" class="hidden" name="guess" value="run">
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6 guess-radio">
+        <div class="well text-center" id="well">
+          <img src="../static/img/punt.png" class="img-responsive img-radio">
+          <button type="button" class="btn btn-primary btn-radio">Punt</button>
+          <input type="checkbox" id="punt-item" class="hidden" name="guess" value="punt">
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6 guess-radio">
+        <div class="well text-center" id="well">
+          <img src="../static/img/kneel.png" class="img-responsive img-radio">
+          <button type="button" class="btn btn-primary btn-radio">Kneel</button>
+          <input type="checkbox" id="kneel-item" class="hidden" name="guess" value="kneel">
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6 guess-radio">
+        <div class="well text-center" id="well">
+          <img src="../static/img/fg.png" class="img-responsive img-radio">
+          <button type="button" class="btn btn-primary btn-radio">Field Goal</button>
+          <input type="checkbox" id="fg-item" class="hidden" name="guess" value="fg">
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-2 col-sm-offset-0 col-sm-4 col-xs-offset-0 col-xs-6 guess-radio">
+        <div class="well text-center" id="well">
+          <img src="../static/img/question-mark.png" class="img-responsive img-radio">
+          <button type="button" class="btn btn-primary btn-radio">Don't Know</button>
+          <input type="checkbox" id="idk-item" class="hidden" name="guess" value="idk">
+        </div>
+      </div>
+      <div class="col-md-offset-0 col-md-12 col-xs-offset-0 col-xs-12 guess-radio" id='submitRow'>
+        <div class="panel" id="panel-top">
+          <div class="panel-body text-center">
+            <input type="submit" id='submit-button' class="btn btn-primary" value="Submit" style='width:35%;'>
+          </div>
+        </div>
+      </div>
+      </form>
+      </div>
+    </div>
+
+    <!-- Validation JS -->
+    <script src="../static/js/validation.js"></script>
+    <script>
+      $('.guess-radio').hide();
+      runValidation();
+
+    </script>
+
+{% endblock %}
