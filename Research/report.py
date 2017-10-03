@@ -16,25 +16,168 @@ sns.set_style("whitegrid")
 
 #Set general plot properties
 sns.set_style("white", {"axes.grid": True})
-sns.set_context({"figure.figsize": (10, 7)})
+#sns.set_context({"figure.figsize": (10, 7)})
+sns.set_context('talk')
+
+################################################
+# PART 1
+################################################
+# Part 1 Figure 1 - HeatMap
+def p1f1_patriots_passing_heat(filename=None, figsize=(15,10)):
+    filtered_data = rs_pbp.mask('posteam', 'NE')
+    outcomes = ['Complete', 'Touchdown', 'Incomplete', 'Fumble', 'Interception']
+    cmaps = ['Greens', 'Oranges', 'Greys', 'Purples', 'Reds']
+    annot=True
+    yard_grouping = 10
+    
+    fig,axes = plt.subplots(1,5,figsize=figsize, sharey=True)
+    
+    for index in range(5):
+        nfltools.plotPassingHeatMap(filtered_data, filters=[['PassOutcome', outcomes[index]]], ax=axes[index], yard_grouping=yard_grouping, annot=annot, cmap=cmaps[index], cbar=False)
+        axes[index].set_title(outcomes[index])
+        if index > 0:
+            axes[index].set_ylabel('')
+    
+    # Filter out 0 value annotations on the heatmaps
+    for col in range(5):
+        for text in axes[col].texts:
+            if text.get_text() == '0':
+                text.set_text('')
+    
+    fig.suptitle('Patriots Passing Game Since 2009')
+    if filename:
+        plt.savefig(filename)
+
+        
+################################################
+#Part 1 Figure 1 Auxilary - HeatMap
+def p1f1_patriots_rushing_heat(filename=None, figsize=(15,10)):
+    sns.set_context('notebook')
+    filtered_data = rs_pbp.mask('posteam', 'NE')
+    outcomes = ['Run', 'Touchdown', 'Fumble']
+    cmaps = ['Greens', 'Oranges', 'Purples']
+    annot=True
+    yard_grouping = 10
+    
+    fig,axes = plt.subplots(1,3,figsize=figsize, sharey=True)
+    
+    for index in range(3):
+        nfltools.plotRushingHeatMap(filtered_data, filters=[['RunOutcome', outcomes[index]]], ax=axes[index], yard_grouping=yard_grouping, annot=annot, cmap=cmaps[index], cbar=False)
+        axes[index].set_title(outcomes[index])
+        if index > 0:
+            axes[index].set_ylabel('')
+    
+    # Filter out 0 value annotations on the heatmaps
+    for col in range(3):
+        for text in axes[col].texts:
+            if text.get_text() == '0':
+                text.set_text('')
+    
+    fig.suptitle('Patriots Rushing Game Since 2009')
+    if filename:
+        plt.savefig(filename)
 
 
 ################################################
-# Figure 1 - HeatMap
-def fig1():
-    filters=[
-        ['Season', 2009, '>=']
-    ]
-    yard_grouping = 10
-    fig,(ax1, ax2) = plt.subplots(1,2,figsize=(15,10))
-    nfltools.plotPassingHeatMap(rs_pbp, filters=filters, ax=ax1, yard_grouping=yard_grouping)
-    nfltools.plotPassingHeatMap(po_pbp, filters=filters, ax=ax2, yard_grouping=yard_grouping)
-    return fig
-figure_1 = fig1()
+#Part 1 Figure 2 - SwarmPlot
+def p1f2_patriots_passing_swarm(filename=None, figsize=(10,8)):
+    sns.set_style('darkgrid')
+    sns.set_context('talk')
+    ylim=(-15,80)
+    figsize=None
+    filters = [['posteam', 'NE'], ['PassOutcome', 'Complete', '!='], ['PassOutcome', 'Incomplete', '!=']]
+
+    fig, axes = plt.subplots(1,1, figsize=figsize)
+    nfltools.plotPassingSwarm(rs_pbp, filters, ylim=ylim, axes=axes, title='Regular Season Fumbles, Touchdowns, and Interceptions')
+    #nfltools.plotPassingSwarm(po_pbp, filters, ylim=ylim, axes=axes[1], title='Postseason Passing')
+    fig.suptitle('Patriots Passing Data Since 2009')
+    #return fig
+    if filename:
+        plt.savefig(filename)
 
 
-###############################################################
-# Figure 1 - HeatMap
+################################################
+#Part 1 Figure 3 - HeatMap
+def p1f3_superbowl_li_heat(filename=None, figsize=(10,12)):
+    sns.set_context('talk')
+    title = 'SuperBowl LI Passing, Rushing, and Field Goals'
+    gen_filters =  None
+    pass_filters = [['PassOutcome', 'Complete']]
+    run_filters =  [['Fumble',0]]
+    fg_filters =   [['FieldGoalResult', 'Good']]
+    nfltools.PlotGamesHeatMaps([2017020500], title, gen_filters=gen_filters, pass_filters=pass_filters, run_filters=run_filters, fg_filters=fg_filters, figsize=figsize)
+    plt.subplots_adjust(hspace=0.35)
+    if filename:
+        plt.savefig(filename)
+    plt.show()
+
+
+################################################
+# Part 1 Figure 4 - hist
+def p1f4_plays_over_time(filename=None, figsize=(10,12)):
+    sns.set_style('dark')
+    fig, ax = plt.subplots(3,1,figsize=figsize)
+
+    plots = ['Pass', 'Run', 'Field Goal']
+    colors = ['Green', 'Blue', 'Red']
+
+    loc = plticker.MultipleLocator(base=300.0) # this locator puts ticks at regular intervals
+
+    for i in range(len(plots)):
+        ax[i].hist(regular.loc[regular.PlayType == plots[i]].TimeSecs, bins=60, normed=False, label=plots[i], color=colors[i])
+        ax[i].legend()
+        ylim = ax[i].get_ylim()
+        ax[i].plot([15*60,15*60],[ylim[0],ylim[1]], c='white', linewidth=2, alpha=0.6)
+        ax[i].plot([30*60,30*60],[ylim[0],ylim[1]], c='white', linewidth=2, alpha=0.6)
+        ax[i].plot([45*60,45*60],[ylim[0],ylim[1]], c='white', linewidth=2, alpha=0.6)
+        ax[i].set_ylim(ylim)
+        ax[i].grid(True,'major','y')
+        ax[i].grid(False,'major','x')
+        ax[i].set_xlim(0,3600)
+        ax[i].xaxis.set_major_locator(loc)
+        ax[i].set_xticklabels([0,0,5,10,15,20,25,30,35,40,45,50,55,60])
+        ax[i].set_xlabel('Mintues Remaining in Game')
+        ax[i].set_ylabel('Number of Plays')
+        ax[i].set_title('{} Plays per Game Minute'.format(plots[i]))
+    plt.suptitle('09-16 Regular Season NFL Plays per Game Minute') 
+    plt.subplots_adjust(hspace=0.5)
+    if filename:
+        plt.savefig(filename)
+    plt.show()
+
+    
+################################################
+# Part 1 Figure 5 - Swarm
+def p1f5_postseason_fieldgoals_swarm(filename=None, figsize=(10,12)):
+    seasons = po_pbp.Season.unique().tolist()
+    ylim=(15,70)
+    figsize=None
+
+    fig, axes = plt.subplots(2,4, figsize=figsize, sharey=True)
+    row = 0
+    col = 0
+    for season in seasons:
+        filters=[['Season', season, '==']]
+        nfltools.plotFieldGoalSwarm(po_pbp, filters=filters, ylim=ylim, title='{}'.format(season), figsize=figsize, axes=axes[row][col])
+        if col > 0:
+            axes[row][col].set_ylabel('')
+        if season in seasons[1:]:
+            axes[row][col].legend().set_visible(False)
+        col += 1
+        if col > 3:
+            row += 1
+            col = 0
+    
+    fig.tight_layout()
+    fig.suptitle('Postseason Field Goals by Distance Since 2009')
+    fig.subplots_adjust(top=0.94)
+    if filename:
+        plt.savefig(filename)
+
+################################################
+# PART 2
+################################################
+# Part 2 Figure 1 - Counting Plays
 def match(playtype):
     valid_play_types = [
         'Field Goal',
@@ -60,290 +203,30 @@ playoffs = condense_pbp_data(po_pbp)
 regular = condense_pbp_data(rs_pbp)
 
 
-def makeDF(season=2009):
-    rdf = regular#[regular.Season==season]
+def p2f1_counting_plays(include_playoffs=False, filename=None, figsize=(10,8)):
+    fig, ax1 = plt.subplots(1,1,figsize=figsize)
+    
+    rdf = regular
     rdf = rdf.groupby('PlayType').agg({'qtr':len}).reset_index()
     rdf.columns = ['PlayType', 'Count']
     rdf['Percent Total'] = rdf.Count/rdf.Count.sum()*100
     rdf['ID'] = 'Regular'
+    
+    if include_playoffs:
+        pdf = playoffs
+        pdf = pdf.groupby('PlayType').agg({'qtr':len}).reset_index()
+        pdf.columns = ['PlayType', 'Count']
+        pdf['Percent Total'] = pdf.Count/pdf.Count.sum()*100
+        pdf['ID'] = 'Playoffs'
 
-    pdf = playoffs[playoffs.Season==season]
-    pdf = pdf.groupby('PlayType').agg({'qtr':len}).reset_index()
-    pdf.columns = ['PlayType', 'Count']
-    pdf['Percent Total'] = pdf.Count/pdf.Count.sum()*100
-    pdf['ID'] = 'Playoffs'
-
-    x = rdf.append(pdf, ignore_index=True)
-    fig, ax1 = plt.subplots(1,1,figsize=(12,10))
+        x = rdf.append(pdf, ignore_index=True)
+        plt.title('Regular and Playoff Play Types Since 2009')
+    else:
+        x = rdf.copy()
+        plt.title('Regular Seasons Play Types Since 2009')
+    
     sns.barplot(ax=ax1, data=x, y='PlayType', x='Percent Total',hue='ID', order=['Pass', 'Run', 'Punt', 'Field Goal', 'QB Kneel'])
+    ax1.set_xlabel('Percent of All Plays')
     ax1.set_xlim(0,60)
-    return fig
-
-figure_2 = makeDF()
-
-
-
-###############################################################
-# Figure 1 - HeatMap
-def fig3():
-    sns.set_style('whitegrid')
-    sns.set_palette(['blue', 'green','red'])
-
-
-    fig, axes = plt.subplots(2, 1, figsize=(15,15))
-    shade = True
-    bw = '2'
-
-    sns.kdeplot(ax=axes[0],data=rs_pbp[rs_pbp.PlayType == 'Pass'].ScoreDiff.dropna(),label='Pass',shade=shade,bw=bw)
-    sns.kdeplot(ax=axes[0],data=rs_pbp[rs_pbp.PlayType == 'Run'].ScoreDiff.dropna(),label='Run',shade=shade,bw=bw)
-    sns.kdeplot(ax=axes[0],data=rs_pbp[rs_pbp.PlayType == 'Extra Point'].ScoreDiff.dropna(),label='Extra Point',shade=shade,bw=bw)
-
-    axes[0].set_xlim(-40,40)
-    axes[0].set_ylim(0,0.09)
-
-    sns.kdeplot(ax=axes[1],data=po_pbp[po_pbp.PlayType == 'Pass'].ScoreDiff.dropna(),label='Pass',shade=shade,bw=bw)
-    sns.kdeplot(ax=axes[1],data=po_pbp[po_pbp.PlayType == 'Run'].ScoreDiff.dropna(),label='Run',shade=shade,bw=bw)
-    sns.kdeplot(ax=axes[1],data=po_pbp[po_pbp.PlayType == 'Extra Point'].ScoreDiff.dropna(),label='Extra Point',shade=shade,bw=bw)
-
-    axes[1].set_xlim(-40,40)
-    axes[1].set_ylim(0,0.09)
-    #SMOOTH IT OUT!
-    return fig
-
-figure_3 = fig3()
-
-
-###############################################################
-# Figure 1 - HeatMap
-def plot_PlayType(df,stat,playtypelist=['Pass','Run','Field Goal','QB Kneel','Punt'],percent_total=False):
-    g = df.groupby([stat,'PlayType']).count().reset_index()
-    g = g[g.columns[0:3]]
-    last_col_name = g.columns[-1]
-    g1 = g.groupby([stat, 'PlayType']).agg({last_col_name: 'sum'})
-    if percent_total:
-        g1 = g1.groupby(level=1).apply(lambda x: 100 * x / float(x.sum()))
-    g1 = g1.reset_index()
-    g1 = g1[g1.PlayType.apply(lambda x: x in playtypelist)]
-    return sns.barplot(x=stat, y=last_col_name, hue="PlayType", data=g1)
-
-
-def fig4():
-    fig = plt.figure(figsize=(16,32))
-
-    ax3 = fig.add_subplot(513)
-    ax3 = plot_PlayType(regular,'qtr',['Run','Pass'],False)
-
-    ax4 = fig.add_subplot(514)
-    ax4 = plot_PlayType(regular,'yrdline100',['Run','Pass'],False)
-    ax4.xaxis.set_ticks(range(4, 99, 5))
-    ax4.xaxis.set_ticklabels(range(5,100,5))
-    ax4.grid(True,'major','both')
-    return fig
-
-
-figure_4 = fig4()
-
-###############################################################
-# Figure 1 - HeatMap
-def fig5():
-    fig, axes = plt.subplots(2,1,figsize=(14,7))
-    sns.kdeplot(ax=axes[0],data=regular[regular.PlayType == 'Pass'].TimeSecs,bw=20,label='Pass')
-    sns.kdeplot(ax=axes[0],data=regular[regular.PlayType == 'Run'].TimeSecs,bw=20,label='Run')
-    loc = plticker.MultipleLocator(base=120.0) # this locator puts ticks at regular intervals
-    axes[0].xaxis.set_major_locator(loc)
-    axes[0].set_xlim(0,3600)
-    axes[0].set_ylim(0,0.00085)
-    axes[0].vlines([x*60 for x in [15,30,45]],0,0.0009,colors='black')
-    axes[0].grid(True,'major','y')
-    axes[0].grid(False,'major','x')
-
-    sns.kdeplot(ax=axes[1],data=playoffs[playoffs.PlayType == 'Pass'].TimeSecs,bw=20,label='Pass')
-    sns.kdeplot(ax=axes[1],data=playoffs[playoffs.PlayType == 'Run'].TimeSecs,bw=20,label='Run')
-    loc = plticker.MultipleLocator(base=120.0) # this locator puts ticks at regular intervals
-    axes[1].xaxis.set_major_locator(loc)
-    axes[1].set_xlim(0,3600)
-    axes[1].set_ylim(0,0.00085)
-    axes[1].vlines([x*60 for x in [15,30,45]],0,0.0009,colors='black')
-    axes[1].grid(True,'major','y')
-    axes[1].grid(False,'major','x')
-    return fig
-
-figure_5 = fig5()
-
-#################################################################
-# Figure 1 - HeatMap
-def fig6():
-    rs_fg = rs_pbp[rs_pbp.PlayType =='Field Goal'].groupby('FieldGoalResult').agg({'Date':len}).reset_index()
-    rs_fg.columns=['FieldGoalResult', 'Count']
-    rs_fg['Percent Total'] = rs_fg.Count.apply(lambda x: 100 * x / float(rs_fg.Count.sum()))
-
-    po_fg = po_pbp[po_pbp.PlayType =='Field Goal'].groupby('FieldGoalResult').agg({'Date':len}).reset_index()
-    po_fg.columns=['FieldGoalResult', 'Count']
-    po_fg['Percent Total'] = po_fg.Count.apply(lambda x: 100 * x / float(po_fg.Count.sum()))
-
-    sns.set_palette(['green', 'orange', 'red'])
-
-
-    fig, axes = plt.subplots(2, 2,sharey=True,figsize=(14,7))
-    order = ['Good','Blocked','No Good']
-
-    sns.violinplot(ax=axes[0][0], data=rs_pbp[rs_pbp.PlayType=='Field Goal'], x='FieldGoalDistance', y='FieldGoalResult',order=order, scale='width', bw=0.05)
-    sns.violinplot(ax=axes[1][0], data=po_pbp[po_pbp.PlayType=='Field Goal'], x='FieldGoalDistance', y='FieldGoalResult',order=order, scale='width', bw=0.05)
-    axes[0][0].set_xlim(0,100)
-    axes[1][0].set_xlim(0,100)
-
-    sns.barplot(ax=axes[0][1], data=rs_fg,y='FieldGoalResult', x='Percent Total',order=order)
-    sns.barplot(ax=axes[1][1], data=po_fg,y='FieldGoalResult', x='Percent Total',order=order)
-    axes[0][1].set_xlim(0,100)
-    axes[1][1].set_xlim(0,100)
-
-    axes[0][1].set_xticklabels(['0%','20%','40%','60%','80%','100%'])
-    axes[1][1].set_xticklabels(['0%','20%','40%','60%','80%','100%'])
-
-
-    axes[0][0].set_title('Field Goal Results by Distance')
-    axes[0][0].set_xlabel('')
-    axes[0][0].set_ylabel('Regular Season')
-
-    axes[0][1].set_title('Field Goal Results Distribution')
-    axes[0][1].set_xlabel('')
-    axes[0][1].set_ylabel('')
-
-    axes[1][0].set_ylabel('Playoffs')
-    axes[1][0].set_xlabel('Field Goal Distance (yds)')
-    axes[1][0].figure
-
-    axes[1][1].set_ylabel('')
-    axes[1][1].set_xlabel('Percent Total')
-    return fig
-
-
-figure_6 = fig6()
-#####################################################################
-# Figure 1 - HeatMap
-teams = [['ARI', 'Arizona', 'Cardinals', 'Arizona Cardinals'],
- ['ATL', 'Atlanta', 'Falcons', 'Atlanta Falcons'],
- ['BAL', 'Baltimore', 'Ravens', 'Baltimore Ravens'],
- ['BUF', 'Buffalo', 'Bills', 'Buffalo Bills'],
- ['CAR', 'Carolina', 'Panthers', 'Carolina Panthers'],
- ['CHI', 'Chicago', 'Bears', 'Chicago Bears'],
- ['CIN', 'Cincinnati', 'Bengals', 'Cincinnati Bengals'],
- ['CLE', 'Cleveland', 'Browns', 'Cleveland Browns'],
- ['DAL', 'Dallas', 'Cowboys', 'Dallas Cowboys'],
- ['DEN', 'Denver', 'Broncos', 'Denver Broncos'],
- ['DET', 'Detroit', 'Lions', 'Detroit Lions'],
- ['GB', 'Green Bay', 'Packers', 'Green Bay Packers', 'G.B.', 'GNB'],
- ['HOU', 'Houston', 'Texans', 'Houston Texans'],
- ['IND', 'Indianapolis', 'Colts', 'Indianapolis Colts'],
- ['JAC', 'Jacksonville', 'Jaguars', 'Jacksonville Jaguars', 'JAX'],
- ['KC', 'Kansas City', 'Chiefs', 'Kansas City Chiefs', 'K.C.', 'KAN'],
- ['LA', 'Los Angeles', 'Rams', 'Los Angeles Rams', 'L.A.'],
- ['MIA', 'Miami', 'Dolphins', 'Miami Dolphins'],
- ['MIN', 'Minnesota', 'Vikings', 'Minnesota Vikings'],
- ['NE', 'New England', 'Patriots', 'New England Patriots', 'N.E.', 'NWE'],
- ['NO', 'New Orleans', 'Saints', 'New Orleans Saints', 'N.O.', 'NOR'],
- ['NYG', 'Giants', 'New York Giants', 'N.Y.G.'],
- ['NYJ', 'Jets', 'New York Jets', 'N.Y.J.'],
- ['OAK', 'Oakland', 'Raiders', 'Oakland Raiders'],
- ['PHI', 'Philadelphia', 'Eagles', 'Philadelphia Eagles'],
- ['PIT', 'Pittsburgh', 'Steelers', 'Pittsburgh Steelers'],
- ['SD', 'San Diego', 'Chargers', 'San Diego Chargers', 'S.D.', 'SDG'],
- ['SEA', 'Seattle', 'Seahawks', 'Seattle Seahawks'],
- ['SF', 'San Francisco', '49ers', 'San Francisco 49ers', 'S.F.', 'SFO'],
- ['STL', 'St. Louis', 'Rams', 'St. Louis Rams', 'S.T.L.'],
- ['TB', 'Tampa Bay', 'Buccaneers', 'Tampa Bay Buccaneers', 'T.B.', 'TAM'],
- ['TEN', 'Tennessee', 'Titans', 'Tennessee Titans'],
- ['WAS', 'Washington', 'Redskins', 'Washington Redskins', 'WSH']]
-
-teams_dict = {x[3]:x[0] for x in teams}
- # Jacksonville Data Fix
-rs_pbp.posteam = rs_pbp.posteam.replace('JAX', 'JAC')
-rs_pbp.HomeTeam = rs_pbp.HomeTeam.replace('JAX', 'JAC')
-rs_pbp.AwayTeam = rs_pbp.AwayTeam.replace('JAX', 'JAC')
-
-pass_rush_attempts_by_team = rs_pbp.groupby(['posteam','Season']).agg(sum)[['PassAttempt','RushAttempt']]
-pass_rush_attempts_by_team['PassRushRatio'] = pass_rush_attempts_by_team.apply(lambda x: (x.PassAttempt * 1.0) / x.RushAttempt, axis=1)
-
-sns.set_palette('muted')
-plot_df = pass_rush_attempts_by_team
-plot_teams = teams_dict
-
-
-def plotPassRushByTeam(team_focus_1, team_focus_2):
-    fig,ax = plt.subplots(1,1,figsize=(15,8))
-    for team in plot_teams:
-        if (plot_teams[team] != team_focus_1) or (plot_teams[team] != team_focus_1):
-            plt.plot(plot_df.loc[plot_teams[team]]['PassRushRatio'], color='0.91')
-    plt.plot(plot_df.loc[team_focus_1]['PassRushRatio'], color='Blue', axes=ax)
-    plt.plot(plot_df.loc[team_focus_2]['PassRushRatio'], color='Red', axes=ax)
-    return fig
-
-
-def fig7():
-    sns.set_style('white')
-    return plotPassRushByTeam(team_focus_1 = 'NYG', team_focus_2 = 'NYJ')
-
-
-figure_7 = fig7()
-
-##########################################################
-# Figure 1 - HeatMap
-
-playoff_teams = {year:po_pbp.mask('Season',year).posteam.dropna().unique().tolist() for year in np.arange(2009,2017,1)}
-
-def madeit(row):
-    team, season = row.name
-    return int(team in playoff_teams[season])
-
-next_df = pass_rush_attempts_by_team.copy()
-
-next_df['PO'] = next_df.apply(madeit, axis=1)
-
-next_df.reset_index().groupby(['posteam','PO']).agg({'PassRushRatio':np.mean}).reset_index().pivot('posteam','PO','PassRushRatio')
-
-
-
-def fig8():
-    sns.set_context('talk')
-    #sns.heatmap(data = pass_rush_attempts_by_team.reset_index().pivot('posteam','PO','PassRushRatio'),
-    #            vmin=0,vmax=1,square=False,cmap='rainbow', annot=False)
-    fig,ax = plt.subplots(1,1)
-    new_df = next_df.reset_index().groupby(['posteam','PO']).agg({'PassRushRatio':np.mean}).reset_index().pivot('posteam','PO','PassRushRatio')
-    sns.heatmap(data = new_df, square=False, annot=False, cmap='Greens')
-    return fig
-
-
-figure_8 = fig8()
-############################################################
-
-def fig9():
-    fig,ax = plt.subplots(1,1)
-    pass_rush_attempts_by_team.loc['DEN']['PassRushRatio'].plot()
-    return fig
-
-
-figure_9 = fig9()
-
-#############################################################
-
-def fig10():
-    fig, ax = plt.subplots(1,1,figsize=(3,5))
-    sns.boxplot(data=next_df.reset_index(),x='PO', y='PassRushRatio', ax=ax)
-    return fig
-
-
-figure_10 = fig10()
-#############################################################
-
-avg_prr_by_team = pass_rush_attempts_by_team.reset_index().groupby('posteam').agg({'PassRushRatio':np.mean}).sort_values('PassRushRatio')
-avg_prr_by_season = pass_rush_attempts_by_team.reset_index().groupby('Season').agg({'PassRushRatio':np.mean}).sort_values('PassRushRatio')
-
-
-def fig11():
-    with sns.axes_style('ticks'):
-        fig,ax = plt.subplots(1,1,figsize=(20,7))
-        sns.boxplot(data=next_df.reset_index(),x='posteam', y='PassRushRatio', ax=ax, order=avg_prr_by_team.index.tolist(),hue='PO')
-    return fig
-
-
-figure_11 = fig11()
+    if filename:
+        plt.savefig(filename)

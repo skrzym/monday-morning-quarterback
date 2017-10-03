@@ -5,7 +5,7 @@ import time
 from sklearn.ensemble import BaggingClassifier, RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
+from sklearn.cross_validation import train_test_split
 import warnings
 from sklearn.externals import joblib
 
@@ -21,7 +21,7 @@ def gather_and_process_data(path, test_season=None):
     
     # Pull specific columns for the model here
     # 'time' column has the specific 'XX:XX' game clock that can be used if converted to a usable number
-    cdata = seasons[['qtr', 'down', 'ydstogo', 'TimeUnder', 'yrdline100', 'ScoreDiff', 'PlayType', 'Season']]
+    cdata = seasons[['posteam','DefensiveTeam','qtr', 'down', 'ydstogo', 'TimeUnder', 'yrdline100', 'ScoreDiff', 'PlayType', 'Season']]
 
 
     def match(playtype):
@@ -44,8 +44,7 @@ def gather_and_process_data(path, test_season=None):
                  'ydstogo',
                  'TimeUnder',
                  'yrdline100',
-                 'ScoreDiff'
-                ]
+                 'ScoreDiff']
             ].to_records(index=False)]
         y = cdata['PlayType'].tolist()
 
